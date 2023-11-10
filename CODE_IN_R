@@ -1,0 +1,166 @@
+Number_Of_Users<-count(dailyActivity_merged,Id)
+Number_Of_Users
+View(Number_Of_Users)
+
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(ggplot2)
+library(skimr)
+library(janitor)
+
+ggplot(dat=Number_of_Users)+geom_bar(mapping = aes(x=Id))
+
+
+
+Number_Of_Users2<-count(minuteStepsWide_merged,Id)
+View(Number_Of_Users2)
+
+
+
+Number_Of_Users3<-count(sleepDay_merged,Id)
+View(Number_Of_Users3)
+
+
+Number_Of_Users4<-count(minuteCaloriesNarrow_merged,Id)
+View(Number_Of_Users4)
+
+
+Number_Of_Users5<-count(minuteCaloriesWide_merged,Id)
+View(Number_Of_Users5)
+
+comparison<- data_frame(Number_of_Users,Number_of_Users2)
+
+#Before starting we are going to examine the data structure, which I have done already with the other datasets and also make sure to remove all duplicates if there are any.
+head(dailyActivity_merged)
+sum(duplicated(mutated_dailyActivity)) #This gives as the sume of duplicated entries, which is 0, so there is no duplicates.
+
+#In case that there were duplicates, we could remove them by using the unique function.
+
+unique(mutated_dailyActivity)
+
+#In case there were Null values in the dataset, we could remove them using the following code:
+
+x<- dataframe...# let's say x is our dataframe, then
+
+Filter(negate(is.null),x) # this would filter out the null values from the list, so we could just assing it to a variable and store its value there.
+
+sum(is.null(mutated_dailyActivity)) #Now again the sum is 0 when we check for NULL values, or no entry.
+
+#Now we are going to see how many different user IDs are in the database.
+
+Total_Users<-dailyActivity_merged %>% group_by(Id) %>% summarize()
+
+#According to the result there are a total of 33 IDs, but in the information they said that there were only 30, that means that some users may have created more than one input.
+
+#When I try to use the function to extract the day of the week of the given date, I'm getting an error, and the type of data is <chr>, so I'm going to change it to Date format to see if that fixes it.
+
+mutated_dailyActivity<- dailyActivity_merged %>% mutate(Date=mdy(ActivityDate))
+
+#It worked, now it is being displayed as the proper data type.
+
+str(mutated_dailyActivity)
+
+#With this we can quickly see the structure of the dataset.
+
+
+#Now, I'm going to erase the previous column with the subset command.
+
+mutated_dailyActivity<- mutated_dailyActivity %>% subset(select=-c(ActivityDate))
+
+#Now I'm going to summarize some of the other columns because they all have some similar information that I could re-group in one single column.
+
+#I have just noticed that TotalDistance and Tracker Distance have very similar values, I'm going to run a code that creates a new column that substracts those to columns to see if there is any difference between them.
+
+view(mutated_dailyActivity %>% mutate(Distance_Difference=TotalDistance-TrackerDistance))
+
+#sum=13.49
+view(mutated_dailyActivity %>% mutate(Distance_Difference=TotalDistance-TrackerDistance) %>% count(Distance_Difference))
+
+#So, out of 940 entries, only 15 times there was a difference between these values and it was on average 0.89 so it doesn't really have any significance. I will only keep the total distance
+
+
+mutated_dailyActivity<-mutated_dailyActivity %>% subset(select=-c(TrackerDistance))
+
+#Now I will create a column that gives me the total minutes of exercise, bacause they're spreaded in multiple columns depending on their intensity, I think a better metric would be total active minutes and just show
+#the intensities as % of the total active time.
+
+mutated_dailyActivity<-mutate(mutated_dailyActivity,Total_Minutes = VeryActiveMinutes+FairlyActiveMinutes+LightlyActiveMinutes+SedentaryMinutes)
+
+#Then I will turn each date to the respective day of the week.
+
+mutated_dailyActivity<-mutated_dailyActivity %>% mutate(Day_of_Week=wday(Date,label=TRUE))
+
+# I noticed that there's no sleep info in this summary, so I'm gonna take some information from the other dataset and bring it to this summary.
+
+mutated_sleepDay<-sleepDay_merged %>% mutate(HoursSleep=TotalMinutesAsleep/60,HoursInBed=TotalTimeInBed/60)
+
+mutated_sleepDay<-mutated_sleepDay %>% group_by(Id) %>% summarize(Hours_Asleep=mean(HoursSleep),Hours_in_Bed=mean(HoursInBed))
+
+#Now I have an average of the sleep time of each user as well as the average of the total time they spend in bed.
+
+mutated_sleepDay<-mutated_sleepDay %>% group_by(Id) %>% summarize(Hours_Asleep=mean(HoursSleep),Hours_in_Bed=mean(HoursInBed))
+ Total_Users_Sleep= merge(x = Total_Users, y = mutated_sleepDay, by = "Id",
+                                    all = TRUE)
+ 
+ #I applied that code to merge the IDs from all users with their average sleep time and their average total time in bed.
+ 
+ 
+ #Next, what I did was to figure out the start and finish date of each user tracking information.
+ 
+ Start_and_FinishDate<-mutated_dailyActivity %>% group_by(Id) %>% summarize(Start=min(Date),Finish=max(Date))
+ 
+ #Then, I calculated the total duration for each user and the average duration for all users.
+ 
+ Start_and_FinishDate %>% summarize(mean(Duration_Days))
+
+ #Obtaining a total of 27.5 days as average of the total duration.
+ 
+ #Now I summarized how many times each date appears for each ID so we make sure that are not duplicated logs, like the same day twice or more for the same ID
+
+
+ mutated_dailyActivity %>% count(Date)
+ 
+ #obtaining the exact same number or entries for the different IDs, that means that each day was only logged once for every user.
+ 
+ #Now I assign the number of the week to each date, so I can make a summary of the information by week.
+ 
+ mutated_dailyActivity<- mutated_dailyActivity %>% mutate(Number_of_Week=isoweek(Date))
+ 
+ #Going back to the sleep tracking, there are only 24 users who tracked their sleep and only did it for an average of 17 days. It represents a 72%
+ #the total users
+ 
+#Whenever I would plot my chart it would start on sunday, but now I switched the levels with the following code.
+ View(mutated_dailyActivity %>% mutate(Day_of_Week=factor(Day_of_Week,levels=c("Tue","Wed","Thu","Fri","Sat","Sun","Mon"))))
+ 
+ #The following code allows us to display the summary of all the tracking information for every different user.
+ 
+ ggplot(data = mutated_dailyActivity,ylim=(0:75000))+geom_col(mapping = aes(x=Day_of_Week,y=TotalSteps,fill=fct_rev(Number_of_Week)))
+ +facet_wrap(~Id)+scale_y_continuous(name="Number of Steps",breaks=seq(0,75000,10000),limits=c(0,75000))
+ +labs(title="Daily Steps Taken by Every User",x="Day of Week",fill="Number of Week",caption = "Data source: Fitness Tracking, Bellafit")
+ 
+ #I had to convert the Numbers of the Week to factor for it to display it as a discrete variable, and also I had to revert the order of the labels since it takes it ordinal value instead 
+ #of the order of which it's displayed.
+ 
+ #Then I plotted the calories burned for every user by using the following code.
+ 
+ ggplot(data = mutated_dailyActivity,ylim=(0:15000))+geom_col(mapping = aes(x=Day_of_Week,y=Calories,fill=fct_rev(Number_of_Week)))
+ +facet_wrap(~Id)+scale_y_continuous(name="Calories Burned",breaks=seq(0,15000,3000),limits=c(0,15000))
+ +labs(title="Daily Calories Burned by Every User",x="Day of Week",
+       fill="Number of Week",caption = "Data source: Fitness Tracking, Bellafit",subtitle = "In a month of use")
+ 
+ 
+ #With the following code we are able to see the average of the steps taken per day of the week by all users.
+ 
+ ggplot(data = Summarized_Calories_PerWeekDay) 
+ + geom_col(mapping = aes(x=Day_of_Week, y=Calories_Burned,fill=Day_of_Week))
+ +labs(title="Average Calories Burned Per Day of The Week", subtitle="Taking data from all users",fill="Day of the Week",x="Day of Week", y="Calories Burned")
+ 
+ # The following code is to plot the amount of calories burned vs the total amount of minutes of exercise by all users
+ 
+ ggplot(data=mutated_dailyActivity,mapping=aes(x=Total_Active_Minutes,y=Calories))+geom_point(color="red")+labs(title = "Total Active Minutes vs. Calories Burned", x="Minutes of Exercise",y="Calories Burned")
+ > 
+   
+   #Then the following code was ran to visualize the calories burned Vs. the ammount of steps taken.
