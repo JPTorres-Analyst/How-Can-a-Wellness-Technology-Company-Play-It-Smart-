@@ -198,7 +198,7 @@ Keeping this in mind and considering the worked we have done we can make the fol
 
 3- Distinguish phsycial activity not only by intensity but by type of, that is, labeling the type of training thy are doing, since by having information like this can take us to further analysis and more valuable and accurate insights.
 
-4-Increase their dataset by requesting their existing users to track their fitness information, as we mentioned before, 33 users is not enough to entablish serious trends that describe the entire population of potential customers.
+4-Increase the dataset by requesting their existing users to track their fitness information, as we mentioned before, 33 users is not enough to entablish trends that describe the entire population of potential customers.
 
 
 
