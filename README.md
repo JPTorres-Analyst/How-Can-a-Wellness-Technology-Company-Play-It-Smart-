@@ -45,7 +45,7 @@ Since we are going to be working in R studio, we need to import the data, to do 
 
 <img src=https://i.stack.imgur.com/bADSk.png/>
 
-Before we start to make changes to the data, we are going to call some libraries that will help us with the process phase:
+Before we start to make changes to the data, we are going to import some libraries that will help us with the process phase:
 
 ```
 library(tidyverse)
