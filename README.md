@@ -205,6 +205,3 @@ Keeping this in mind and considering the worked we have done we can make the fol
 
 </p>
 </p>
-
-```
---!>
