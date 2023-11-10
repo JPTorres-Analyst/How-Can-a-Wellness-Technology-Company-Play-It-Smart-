@@ -11,27 +11,6 @@ library(ggplot2)
 library(skimr)
 library(janitor)
 
-ggplot(dat=Number_of_Users)+geom_bar(mapping = aes(x=Id))
-
-
-
-Number_Of_Users2<-count(minuteStepsWide_merged,Id)
-View(Number_Of_Users2)
-
-
-
-Number_Of_Users3<-count(sleepDay_merged,Id)
-View(Number_Of_Users3)
-
-
-Number_Of_Users4<-count(minuteCaloriesNarrow_merged,Id)
-View(Number_Of_Users4)
-
-
-Number_Of_Users5<-count(minuteCaloriesWide_merged,Id)
-View(Number_Of_Users5)
-
-comparison<- data_frame(Number_of_Users,Number_of_Users2)
 
 #Before starting we are going to examine the data structure, which I have done already with the other datasets and also make sure to remove all duplicates if there are any.
 head(dailyActivity_merged)
