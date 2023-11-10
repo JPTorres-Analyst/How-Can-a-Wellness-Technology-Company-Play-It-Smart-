@@ -3,6 +3,8 @@
 
 <h2>Description</h2>
 This project consists in the cleaning, processing and analysis of fitness tracking information from a dataset available in Kaggle (https://www.kaggle.com/datasets/arashnic/fitbit) to draw insights and trends shown by the users in order to help the company make data-driven decisions to improve their service.
+<br/>
+The dataset includes 18 different tables with data of their physical activity, their steps, the intensities, etc. That will need to be managed in order to summarize the information of the different users.
 <br />
 
 
@@ -39,10 +41,9 @@ Provide insights from existing fitness tracking devices data in order to improve
 
 <h2> PREPARE PHASE: </h2>
 
-Since we are going to be working in R studio, we need to import the data, to do this we do the following: go to the files pane located in the right bottom corner
+Since we are going to be working in R studio, we need to import the data, to do this we do the following: go to the files pane located in the right bottom corner. "3" as shown in the following image, where we can browse through our files and choose our datasets.
 
-////INSERT IMAGE///
-
+<img src=https://i.stack.imgur.com/bADSk.png/>
 
 Before we start to make changes to the data, we are going to call some libraries that will help us with the process phase:
 
@@ -81,7 +82,7 @@ To conclude with this phase we are going to check how many total users are, to d
 
 Which gave us a total of 33. This does not match with the initial information given to us in the problem, since they said that there was a total of 30 users, this means that more users input information in this dataset. The reason could be more people entering data or one user using multiple IDs.
  
-<h2> PROCESS PHASE: </h2>
+<h2> PROCESS, ANALYZE AND SHARE PHASE: </h2>
 
 Now, we are going to start to process the data. First of all I will include any modifications to a new dataframe, so in case I need to go back to the original information, I will always have that option.
 
@@ -115,7 +116,7 @@ Start_and_FinishDate %>% summarize(mean(Duration_Days))
 ````
 Obatining an average of 28.25 days tracked.
 
-Then, I will plot all the information summarized so far to see if it is displaying in a understandable way and also to get a glance of the data.
+Then, I will plot some of the information summarized so far to see if it is displaying in a understandable way and also to get a glance of the data.
 
 ````
 ggplot(data = mutated_dailyActivity,ylim=(0:15000))+geom_col(mapping = aes(x=Day_of_Week,y=Calories,fill=fct_rev(Number_of_Week)))+facet_wrap(~Id)+scale_y_continuous(name="Calories Burned",breaks=seq(0,15000,3000),limits=c(0,15000))+labs(title="Daily Calories Burned by Every User",x="Day of Week",
@@ -171,7 +172,7 @@ The same can be seen when comparing the average Caloris Burned per user with the
 
 <img src=https://i.imgur.com/4W45GON.png/>
 
-Finally, one more important observartion in the data of all users, is to see how much of their exercise time per day they spent in each phase of intensity. For this we are going to summarize the total active time of exercise and see how much percent in average each intensity contributes to the total.
+Finally, one more important observartion in the data of all users, is to see how much of their awake time per day they spent in each phase of intensity. To do this, we are going to summarize the total active time per day and see how much percent in average each intensity contributes to the total.
 
 To summarize all this information, we use the following code:
 
@@ -181,91 +182,26 @@ mutated_dailyActivity %>% summarize(Total_Time_of_Exercise=mean(Total_Active_Min
 ````
 If we plot this information we obtain the following chart
 
-Obtaining
-Moving on now to the process step:
+
+<img src=https://i.imgur.com/mTL6nck.png/>
+
+
+<h2>Recomendations and Conclusions</h2>
+
+It is important to mention that the population in this dataset (33 users) is not a reliable source to make meaninful asumptions or take important decisions, with a sample this small the information could be bias and not accurate to describe the entire population of costumers that use fitness devices to track their data.
+
+Keeping this in mind and considering the worked we have done we can make the following recomendations:
+
+1- Since we know that users tend to do more physical activity on twesdays and saturdays, it would be a great strategy to remind users the very next day (wednesdays and sundays) of the amount of activity the did the day before in order to motivate them to "keep their record" or "Keep a strike", since by doing this they can use psycology to push customers to be more active and at the same time use their fitness tracker more.
+
+2- As we saw in the pie chart, most of their active minutes, they spend it being sedentary, so the application could have reminders that warn the users how long they have spent without exercising, or how beneficial doing some kind of exercise could be.
+
+3- Distinguish phsycial activity not only by intensity but by type of, that is, labeling the type of training thy are doing, since by having information like this can take us to further analysis and more valuable and accurate insights.
+
+4-Increase their dataset by requesting their existing users to track their fitness information, as we mentioned before, 33 users is not enough to entablish serious trends that describe the entire population of potential customers.
 
 
 
-<h2> ANALYSIS PHASE: </h2>
-
-<b>What tools are you choosing and why?</b>
-
-
-I opted for R and spreadsheets to solve this case study, I liked the versatility of R because you can import data, clean it, process it and make your visualizations so I pretty much had anything that I needed. I also used spreadsheets because when I would summarize data in smaller tables I would move them there for ease of view and also to do some of the charts.
-
-
-<b>Have you ensured data integrity?</b>
-
-
-Yes, I used the common procedures to ensure integrity, like checking for null values and duplicated information.
-
-
-<b>What steps have you taken to ensure that the data is clean?</b>
-
-
-I made sure that each format of the dataset values would match their purpose, for example having “Double” variables for number of calories or steps taken, and having “date” variables for different dates.
-Also I made sure that the daily entries were in fact daily and not repeated in the same day. I decided not to consider data that wasn’t meaningful, for example there was an user that only participated for days of the 1st week, which is not even a 25% of the total period.
-I also compared the merged dataset with their particular tables to see if the information matched.
-To summarize, I made sure that there was one entry per day per user, were all the different data entries were not repeated and did not contain null values.
-Furthermore, I changed the respective data set structure to match the proper variable type. For example data type to “date” instead of “chr”, where one is a string of character value and the other is a date type meaning that indicates  a specific time in a year.
-
-
-<b>How can you verify that your data is clean and ready to analyze?</b>
-
-
-By using certain functions that allow me to do just that in R.
-
-
-<b>Have you documented your cleaning process so you can review and share those results?</b>
-
-
-Yes, for every chunk of code I wrote, I commented what was the purpose for it.
-
-
-<b>Key tasks accomplished</b>
-
-
--Checked data for errors.
--Chose the tools.
--Transformed the data so I could work with it effectively. 
--Documented the cleaning process.
-
-
-
-
-Onto to the analyze phase:
-
-<h2> SHARE PHASE: </h2>
-
-<b>How should you organize your data to perform analysis on it?</b>
-In my case, I used the dailyActivity_merged file, created my own dataset over it and added the columns for my summary.
-
-
-<b>Has your data been properly formatted?</b>
-Yes, I made sure to use R functions to clean and format the data, all of this has been detailed in the code. 
-
-
-
-
-<b>How will these insights help answer your business questions?</b>
-By showing the trends on the users fitness data, so we can make data driven decisions for the next trackers or the mobile app.
-
-
-<b>Key tasks</b>
--Aggregated the data so it’s useful and accessible
--Organized and formatted the data.
--Performed calculations.
--Identified trends and relationships.
-
-
-
-
--SHARE PHASE-
-
-
-
-
-Now that the cleaning, formatting, processing and analysis of the data has been completed, we proceed to create data visualizations that will help me explain the insights and recommendations to stakeholders.
 
 </p>
 </p>
