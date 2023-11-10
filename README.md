@@ -79,7 +79,7 @@ To conclude with this phase we are going to check how many total users are, to d
 
 `dailyActivity_merged %>% group_by(Id) %>% summarize()`
 
-Which gave us a total of 33. This does not match with the initail information given to us in the problem, since they said that there was a total of 30 users, this means that more users input information in this dataset. The reason could be more people entering data or one user using multiple IDs.
+Which gave us a total of 33. This does not match with the initial information given to us in the problem, since they said that there was a total of 30 users, this means that more users input information in this dataset. The reason could be more people entering data or one user using multiple IDs.
  
 <h2> PROCESS PHASE: </h2>
 
@@ -115,8 +115,75 @@ Start_and_FinishDate %>% summarize(mean(Duration_Days))
 ````
 Obatining an average of 28.25 days tracked.
 
+Then, I will plot all the information summarized so far to see if it is displaying in a understandable way and also to get a glance of the data.
 
+````
+ggplot(data = mutated_dailyActivity,ylim=(0:15000))+geom_col(mapping = aes(x=Day_of_Week,y=Calories,fill=fct_rev(Number_of_Week)))+facet_wrap(~Id)+scale_y_continuous(name="Calories Burned",breaks=seq(0,15000,3000),limits=c(0,15000))+labs(title="Daily Calories Burned by Every User",x="Day of Week",
++       fill="Number of Week",caption = "Data source: Fitness Tracking, Bellafit",subtitle = "In a month of use")
+````
+
+<img src=https://i.imgur.com/KOPc5EZ.png/>
+
+As we can see in the previous image, one of the users only tracked 4 days of the first week, so I opted to discard this information since we have a total average duration of 28 days, 4 days of tracking is not representative at all. 
+
+To drop the information of that user we use the following code:
+
+````
+mutated_dailyActivity<- mutated_dailyActivity[-c(378,379,380,381), ]
+````
+Now that we have all the data that we need, with no missing information and that is consistent, we proceed to summarize it to obtain meaninful trends shown by the users.
+
+````
+mutated_dailyActivity %>% group_by(Id) %>% summarize(mean(Calories), mean(TotalSteps), mean(Total_Active_Minutes))
+````
+This allows us to summarize the average calories burned, steps taken and total minutes of exercise per user
+
+<img src=https://i.imgur.com/6yuGcZE.png/>
+
+````
+mutated_dailyActivity %>% group_by(Day_of_Week) %>% summarize(mean(TotalSteps))
+````
+The chunk above summarizes the average steps taken for each user in each day of the week. Which when plotted looks like this:
+
+<img src=https://i.imgur.com/jttrTta.png/>
+
+
+Now, another interesting trend is to see what's the day of the week when the users burn the most ammount of calories, to do this we use the following code:
+````
+mutated_dailyActivity %>% group_by(Day_of_Week) %>% summarize(mean(Calories))
+````
+
+When plotted it looks like this:
+
+<img src=https://i.imgur.com/YUI1jqQ.png/>
+
+Acconding to the charts we can say that users tend to walk more and burn the most ammount of calories on twesdays and saturdays. Then it would be interesting the correlation between these two variables. We will now plot a scatterplot that shows the correlation between the two mentioned variable:
+
+````
+ggplot(data=mutated_dailyActivity,mapping=aes(x=TotalSteps,y=Calories))+geom_point()+geom_smooth()+labs(title = "Calories Burned vs. Steps Taken ", y="Calories Burned",x="Steps Taken")
+````
+
+<img src=https://i.imgur.com/j0ZOPM3.png/>
+
+Obtaining a possitive correlation, that means, the more steps taken then the more calories that are burned by the users.
+
+The same can be seen when comparing the average Caloris Burned per user with the Total Active minutes of exercise:
+
+<img src=https://i.imgur.com/4W45GON.png/>
+
+Finally, one more important observartion in the data of all users, is to see how much of their exercise time per day they spent in each phase of intensity. For this we are going to summarize the total active time of exercise and see how much percent in average each intensity contributes to the total.
+
+To summarize all this information, we use the following code:
+
+````
+mutated_dailyActivity %>% summarize(Total_Time_of_Exercise=mean(Total_Active_Minutes),mean(VeryActive_Minutes_P100),mean(FairlyActive_Minutes_P100),mean(Lightly_Minutes_P100),mean(Sedentary_Minutes_P100))
+
+````
+If we plot this information we obtain the following chart
+
+Obtaining
 Moving on now to the process step:
+
 
 
 <h2> ANALYSIS PHASE: </h2>
