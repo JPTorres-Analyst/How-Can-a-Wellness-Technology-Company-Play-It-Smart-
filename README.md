@@ -206,12 +206,5 @@ Keeping this in mind and considering the worked we have done we can make the fol
 </p>
 </p>
 
-<!--
- ```diff
-- text in red
-+ text in green
-! text in orange
-# text in gray
-@@ text in purple (and bold)@@
 ```
 --!>
